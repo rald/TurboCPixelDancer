@@ -38,17 +38,8 @@ dword pal[] = {
 
 void DrawText(byte* srf,Canvas *font,int x,int y,int z,char *text) {
 	int i;
-	int xc=x,yc=y;
 	for(i=0;i<strlen(text);i++) {
-		Canvas_Draw(srf,font,xc,yc,text[i],z);
-		xc+=font->w;
-		if(xc>=SCREEN_WIDTH) {
-			xc=0;
-			yc+=font->h;
-			if(yc>=SCREEN_HEIGHT) {
-				break;
-			}
-		}
+		Canvas_Draw(srf,font,i*font->w+x,y,text[i],z);
 	}
 }
 
@@ -85,8 +76,6 @@ int main() {
 	Palette *palette=NULL;
 
 	Canvas *font=NULL;
-
-	Canvas *icons=NULL;
 
 	char msg[16];
 
@@ -127,8 +116,6 @@ int main() {
 	canvas=Canvas_LoadCVS(INPUT_FILE);
 
 	mouse=Canvas_LoadCVS("mouse.cvs");
-
-	icons=Canvas_LoadCVS("icons.cvs");
 
 	font=Canvas_LoadCVS("font-00.cvs");
 
@@ -248,12 +235,13 @@ int main() {
 		Palette_Draw(buf,palette);
 
 
-		Canvas_Draw(buf,icons,0,canvas->h*z+z,0,1);
-		Canvas_Draw(buf,icons,16+z,canvas->h*z+z,1,1);
+		DrawRect(buf,0,canvas->h*z+z,16,16,15);
+		DrawRect(buf,16+z,canvas->h*z+z,16,16,15);
 
 
 		sprintf(msg,"%7lu",frame);
 		DrawText(buf,font,160,0,1,msg);
+
 
 		Canvas_Draw(buf,mouse,mouse_x>>1,mouse_y,0,1);
 
